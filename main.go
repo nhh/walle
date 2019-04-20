@@ -8,13 +8,6 @@ import (
 	"net/http"
 )
 
-
-// Todo (dont forget)
-// 1. Basic Configuration & Request Mapping (Toml, yaml, json, env)
-// 2. SSL & Letsencrypt
-// 3. Middlewares
-// 4. Advanced Features (Caching, Client config, Server config)
-
 func main() {
 
 	defer fmt.Println("Server shutdown")
