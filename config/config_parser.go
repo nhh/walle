@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 )
 
 func Parse() [] VirtualHost {
@@ -16,18 +17,31 @@ func Parse() [] VirtualHost {
 
 	// The docs looks a little confusing, but this part we actually need.
 
-	str, err := ioutil.ReadFile("./data/config.json")
-
-	if err != nil {
-		panic(err)
-	}
-
 	var vhosts [] VirtualHost
 
-	error := json.Unmarshal([]byte(str), &vhosts)
+	files, error  := ioutil.ReadDir("./data")
 
-	if error != nil {
-		panic(error)
+	for _, file := range files  {
+		if !file.IsDir() && !strings.HasSuffix(file.Name(), "json") {
+			continue
+		}
+
+		str, err := ioutil.ReadFile("./data/" + file.Name())
+
+		if err != nil {
+			panic(err)
+		}
+
+		vhost := VirtualHost{}
+
+		error = json.Unmarshal([]byte(str), &vhost)
+
+		if error != nil {
+			panic(error)
+		}
+
+		vhosts = append(vhosts, vhost)
+
 	}
 
 	return vhosts
