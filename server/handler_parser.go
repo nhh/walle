@@ -1,15 +1,14 @@
-package handler
+package server
 
 import (
-	"fmt"
-	"github.com/nhh/walle/config" // Now i got this idea...
-	"net/http"
-	"net/url"
+    "fmt"
+    "net/http"
+    "net/url"
 )
 
-func Build(vhost config.VirtualHost) {
+func ParseHandler(vhost Location) http.HandlerFunc {
 
-	endpoint, error := url.Parse(vhost.Location["from"])
+	endpoint, error := url.Parse(vhost.From)
 
 	if error != nil {
 		panic("Cannot read endpoint! It must be a valid URI => https://tools.ietf.org/html/rfc3986")
@@ -22,16 +21,17 @@ func Build(vhost config.VirtualHost) {
 			http.HandleFunc(endpoint.Path, func(writer http.ResponseWriter, request *http.Request) {
 				fmt.Fprintln(writer, endpoint.Path)
 			})
-			return
+			return nil
 		}
 		case "file": {
 			// This case would be a static file server
 			// func(writer http.ResponseWriter, request *http.Request) {}
+		    return nil
 		}
 		case "tcp": {
-
+            return nil
 		}
-		default: //func(writer http.ResponseWriter, request *http.Request) {}
+		default: return nil//func(writer http.ResponseWriter, request *http.Request) {}
 	}
 
 }

@@ -2,11 +2,12 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+    "github.com/nhh/walle/server"
+    "io/ioutil"
 	"strings"
 )
 
-func Parse() [] VirtualHost {
+func ParseServers() [] server.WalleServer {
 
 	// Todo feature: Config should be loadable via url.
 	// So json would be a suitable solution
@@ -14,7 +15,7 @@ func Parse() [] VirtualHost {
 
 	// The docs looks a little confusing, but this part we actually need.
 
-	var vhosts [] VirtualHost
+	var servers [] server.WalleServer
 
 	files, error  := ioutil.ReadDir("./data")
 
@@ -29,18 +30,26 @@ func Parse() [] VirtualHost {
 			panic(err)
 		}
 
-		vhost := VirtualHost{}
+		walleServer := server.WalleServer{}
 
-		error = json.Unmarshal([]byte(str), &vhost)
+        error = json.Unmarshal([]byte(str), &walleServer)
+
+        if error != nil {
+            panic(error)
+        }
+
+		location := server.Location{}
+
+		error = json.Unmarshal([]byte(str), &location)
 
 		if error != nil {
 			panic(error)
 		}
 
-		vhosts = append(vhosts, vhost)
+        servers = append(servers, walleServer)
 
 	}
 
-	return vhosts
+	return servers
 
 }
