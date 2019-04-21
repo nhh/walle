@@ -2,6 +2,7 @@ package server
 
 import (
     "context"
+    "fmt"
     "github.com/nhh/walle/handler"
     "log"
     "net/http"
@@ -24,11 +25,24 @@ type WalleServer struct {
 }
 
 func (walleServer WalleServer) Start() {
+
     if walleServer.running {
         return
     }
+
     mux := http.NewServeMux()
+
+    for _, location := range walleServer.Locations {
+        handlerFunction, parseError := ParseHandler(location)
+        if parseError != nil {
+            fmt.Println(parseError.Error())
+            continue
+        }
+        mux.HandleFunc(location.From, handlerFunction)
+    }
+
     mux.HandleFunc("/.well-known/acme-challenge/",  handler.HandleLetsEncryptAcme)
+    mux.HandleFunc("/hello-world",  handler.HandleOkJson)
     // Todo add the custom handler here
 
     // could we possibly use our own Server instead of these?

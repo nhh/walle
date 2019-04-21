@@ -38,14 +38,6 @@ func ParseServers() [] server.WalleServer {
             panic(error)
         }
 
-		location := server.Location{}
-
-		error = json.Unmarshal([]byte(str), &location)
-
-		if error != nil {
-			panic(error)
-		}
-
         servers = append(servers, walleServer)
 
 	}

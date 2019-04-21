@@ -1,37 +1,33 @@
 package server
 
 import (
+    "errors"
     "fmt"
+    "github.com/nhh/walle/handler"
     "net/http"
     "net/url"
 )
 
-func ParseHandler(vhost Location) http.HandlerFunc {
-
-	endpoint, error := url.Parse(vhost.From)
-
-	if error != nil {
-		panic("Cannot read endpoint! It must be a valid URI => https://tools.ietf.org/html/rfc3986")
-	}
-
-	switch endpoint.Scheme {
-		case "https": {
-			// This case would be a SSL Proxy
-			fmt.Println("Mounting " + endpoint.Path)
-			http.HandleFunc(endpoint.Path, func(writer http.ResponseWriter, request *http.Request) {
-				fmt.Fprintln(writer, endpoint.Path)
-			})
-			return nil
+func ParseHandler(location Location) (http.HandlerFunc, error) {
+	switch location.Type{
+		case "proxy": {
+			fmt.Println("Mounting " + location.From + " To " + location.To)
+			target, error := url.Parse(location.To)
+			if (error != nil) {
+			    return nil, errors.New("Cannot parse target url in location")
+            }
+			return handler.NewProxyHandler(*target), nil
 		}
 		case "file": {
 			// This case would be a static file server
 			// func(writer http.ResponseWriter, request *http.Request) {}
-		    return nil
+		    return nil, errors.New("Not implemted")
 		}
 		case "tcp": {
-            return nil
+            return nil, errors.New("Not implemted")
 		}
-		default: return nil//func(writer http.ResponseWriter, request *http.Request) {}
+		default: {
+            return nil, errors.New("Not implemted")
+        }
 	}
-
 }
