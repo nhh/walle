@@ -16,6 +16,7 @@ func main() {
 		handler.Build(conf)
 	}
 
+	http.HandleFunc("/.well-known/acme-challenge/", handler.HandleLetsEncryptAcme)
 	// We are actually ignoring the fact that our rproxy could start with multiple ports and so on.
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
