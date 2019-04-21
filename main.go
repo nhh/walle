@@ -1,24 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"github.com/nhh/walle/config"
-	"github.com/nhh/walle/handler"
-	"log"
-	"net/http"
+    "github.com/nhh/walle/config"
+    "github.com/nhh/walle/handler"
+    "log"
+    "net/http"
+    "strconv"
 )
 
 func main() {
 
-	defer fmt.Println("Server shutdown")
-
 	for _, conf := range config.Parse() {
-		handler.Build(conf)
+
+		// Todo move the "server generation" in its own package/builder
+        handler.Build(conf)
+        configuration := conf
+
+		go func() {
+            mux := http.NewServeMux()
+            mux.HandleFunc("/.well-known/acme-challenge/",  handler.HandleLetsEncryptAcme)
+            // Todo add the custom handler here
+
+            server := http.Server{
+                Addr: ":" + strconv.Itoa(configuration.Port),
+                Handler: mux,
+            }
+
+            log.Fatal(server.ListenAndServe())
+        }()
 	}
 
-	http.HandleFunc("/.well-known/acme-challenge/", handler.HandleLetsEncryptAcme)
-	// We are actually ignoring the fact that our rproxy could start with multiple ports and so on.
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
-
+	// this is the management server, may hold the references to the other server?
+    http.ListenAndServe(":1995", nil)
 }

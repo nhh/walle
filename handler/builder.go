@@ -9,7 +9,7 @@ import (
 
 func Build(vhost config.VirtualHost) {
 
-	endpoint, error := url.Parse(vhost.Proxy["from"])
+	endpoint, error := url.Parse(vhost.Location["from"])
 
 	if error != nil {
 		panic("Cannot read endpoint! It must be a valid URI => https://tools.ietf.org/html/rfc3986")
