@@ -18,10 +18,15 @@ type Runnable interface {
 type WalleServer struct {
     Locations [] Location //lul, that was easy
     Port int
-    Ssl bool // Abstract this into a struct
+    Ssl Ssl // Abstract this into a struct
     httpServer http.Server
     running bool
     // Various other configuration types
+}
+
+type Ssl struct {
+    Email string
+    AcceptTos bool
 }
 
 func (walleServer WalleServer) Start() {
