@@ -4,19 +4,10 @@ import (
     "io"
     "net/http"
     "net/url"
-    "time"
 )
 
-func NewProxyHandler(target url.URL) http.HandlerFunc {
+func NewProxyHandler(target url.URL, client http.Client) http.HandlerFunc {
     return func(w http.ResponseWriter, request *http.Request) {
-        tr := &http.Transport {
-            MaxIdleConns:       10,
-            IdleConnTimeout:    30 * time.Second,
-            DisableCompression: true,
-        }
-
-        client := &http.Client{Transport: tr}
-
         req := http.Request{
             Method: request.Method,
             RemoteAddr: request.RemoteAddr,
@@ -30,7 +21,7 @@ func NewProxyHandler(target url.URL) http.HandlerFunc {
         // Todo Move this into an own middleware handler
         w.Header().Add("X-Server-Used", "W.A.L.L.E")
 
-        if(error != nil) {
+        if error != nil {
             w.WriteHeader(500)
             return
         }

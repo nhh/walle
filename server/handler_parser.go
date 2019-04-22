@@ -6,17 +6,28 @@ import (
     "github.com/nhh/walle/handler"
     "net/http"
     "net/url"
+    "time"
 )
 
 func ParseHandler(location Location) (http.HandlerFunc, error) {
 	switch location.Type{
 		case "proxy": {
 			fmt.Println("Mounting " + location.From + " To " + location.To)
-			target, error := url.Parse(location.To)
-			if (error != nil) {
+			target, parseError := url.Parse(location.To)
+
+			if parseError != nil {
 			    return nil, errors.New("Cannot parse target url in location")
             }
-			return handler.NewProxyHandler(*target), nil
+
+			tr := &http.Transport {
+                MaxIdleConns:       10,
+                IdleConnTimeout:    30 * time.Second,
+                DisableCompression: true,
+            }
+
+            client := http.Client{Transport: tr}
+
+			return handler.NewProxyHandler(*target, client), nil
 		}
 		case "file": {
 			// This case would be a static file server
