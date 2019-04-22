@@ -2,16 +2,19 @@
 
 ## Experimental reverse proxy written in go
 
-### Features
+### Features (planned)
 
-1. Small Configuration (Currently working on it)
-2. SSL & Letsencrypt (Automatic SSL)
-3. Custom Middlewares
-4. Advanced Features (Caching, Client config, Server config)
-5. Service discovery (Registering services with names, and exposing an api to capture those)
+- Dynamic Configuration
+- Automatic SSL & Letsencrypt
+- Custom Middlewares
+- Loadbalancing & Failover
+- Dynamic Caching
+- Service discovery (DNS, API or SRV records)
+- Easy & Accessible (Main goal)
 
+## Letsencrypt Resources
 
-## Foreword
-
-A little introduction of what is what. This may change over time. For now we are talking about "Servers" and "Location"
-The server holds the information of what domain, port we are talking about. Locations are path mappings, with configuration.
+https://letsencrypt.org/docs/integration-guide/
+https://letsencrypt.org/docs/acme-protocol-updates/
+https://letsencrypt.org/docs/
+https://github.com/veeti/manuale/blob/master/manuale/acme.py
