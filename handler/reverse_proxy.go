@@ -20,12 +20,13 @@ func NewProxyHandler(target url.URL, client *http.Client) http.HandlerFunc {
 
         // Todo Move this into an own middleware handler
         w.Header().Add("X-Server-Used", "W.A.L.L.E")
-        defer response.Body.Close()
 
         if error != nil {
             w.WriteHeader(500)
             return
         }
+
+        defer response.Body.Close()
 
         // Very limited, we actually need to set the complete response header here.
         //w.Header()
