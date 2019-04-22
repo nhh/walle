@@ -27,7 +27,7 @@ func ParseHandler(location Location) (http.HandlerFunc, error) {
 
             client := http.Client{Transport: tr}
 
-			return handler.NewProxyHandler(*target, client), nil
+			return handler.NewProxyHandler(*target, &client), nil
 		}
 		case "file": {
 			// This case would be a static file server
