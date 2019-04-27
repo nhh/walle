@@ -20,7 +20,7 @@ func ParseServers() [] server.WalleServer {
 	files, error  := ioutil.ReadDir("./data")
 
 	for _, file := range files  {
-		if !file.IsDir() && !strings.HasSuffix(file.Name(), "json") {
+		if file.IsDir() || !strings.HasSuffix(file.Name(), "json") {
 			continue
 		}
 

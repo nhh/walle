@@ -1,24 +1,25 @@
 package main
 
 import (
-    "fmt"
     "github.com/nhh/walle/config"
-    server2 "github.com/nhh/walle/server"
+    "github.com/nhh/walle/server"
+    "log"
     "net/http"
-    "strconv"
 )
 
 func main() {
 
-    // Setup letsencrypt
+    walleServers := config.ParseServers()
 
-
-
-    for _, server := range config.ParseServers() {
-        fmt.Println("Starting server at: " + strconv.Itoa(server.Port))
-        server2.IssueCertificate(server)
-        server.StartAsync()
+    if len(walleServers) == 0 {
+        log.Printf("Hello World", "")
+    } else {
+        server.Bootstrap(walleServers)
     }
-	// this is the management server, may hold the references to the other server?
+
+    log.Printf("Management Server is startig at: %s", ":1995")
+
+    // Todo connect each walle Server with the master server via channels
     http.ListenAndServe(":1995", nil)
+
 }
