@@ -2,7 +2,6 @@ package server
 
 import (
     "context"
-    "fmt"
     "github.com/nhh/walle/handler"
     "log"
     "net/http"
@@ -16,9 +15,11 @@ type Runnable interface {
 }
 
 type WalleServer struct {
+    Name string
     Locations [] Location //lul, that was easy
     Port int
     Ssl Ssl // Abstract this into a struct
+    Domain string
     httpServer http.Server
     running bool
     // Various other configuration types
@@ -40,12 +41,13 @@ func (walleServer WalleServer) Start() {
     for _, location := range walleServer.Locations {
         handlerFunction, parseError := ParseHandler(location)
         if parseError != nil {
-            fmt.Println(parseError.Error())
+            log.Printf(parseError.Error())
             continue
         }
         mux.HandleFunc(location.From, handlerFunction)
     }
 
+    // TODO Add loggin middleware and so on
     mux.HandleFunc("/.well-known/acme-challenge/",  handler.HandleLetsEncryptAcme)
     mux.HandleFunc("/hello-world",  handler.HandleOkJson)
     // Todo add the custom handler here
@@ -56,8 +58,12 @@ func (walleServer WalleServer) Start() {
         Handler: mux,
     }
 
-    // Mindfuck
-    log.Fatal(walleServer.httpServer.ListenAndServe())
+    if walleServer.Ssl.AcceptTos {
+        log.Fatal(walleServer.httpServer.ListenAndServeTLS("./data/" + walleServer.Domain + "/cert.pem", "./data/" + walleServer.Domain + "/key.pem"))
+    } else {
+        log.Fatal(walleServer.httpServer.ListenAndServe())
+    }
+
 }
 
 func (walleServer WalleServer) StartAsync() {

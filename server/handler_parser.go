@@ -2,8 +2,8 @@ package server
 
 import (
     "errors"
-    "fmt"
     "github.com/nhh/walle/handler"
+    "log"
     "net/http"
     "net/url"
     "time"
@@ -12,7 +12,7 @@ import (
 func ParseHandler(location Location) (http.HandlerFunc, error) {
 	switch location.Type{
 		case "proxy": {
-			fmt.Println("Mounting " + location.From + " To " + location.To)
+			log.Printf("Mounting %s to %s", location.From, location.To)
 			target, parseError := url.Parse(location.To)
 
 			if parseError != nil {
